@@ -25,6 +25,17 @@ print("someInt: \(someInt) and anotherInt: \(anotherInt)")
 
 // Generic Types
 
+protocol Container {
+    
+    typealias ItemType
+    
+    mutating func append(item: ItemType)
+    
+    var count: Int { get }
+    
+    subscript(i: Int) -> ItemType { get }
+}
+
 struct Stack<Element>: Container {
     
     var items = [Element]()
@@ -65,14 +76,6 @@ stackOfDouble.push(2.0)
 
 stackOfDouble.push(3.0)
 
-stackOfDouble.push(4.0)
-
-print(stackOfDouble.items)
-
-stackOfDouble.pop()
-
-print(stackOfDouble.items)
-
 // Extending a Generic Type
 
 extension Stack {
@@ -112,21 +115,43 @@ if let foundIndex = findIndex(stringsArray, "tiger") {
 
 // Associated Types
 
-protocol Container {
+func allItemsMatch<C1: Container, C2: Container where C1.ItemType == C2.ItemType, C1.ItemType: Equatable>(someContainer: C1, _ anotherContainer: C2) -> Bool {
     
-    typealias ItemType
+    if someContainer.count != anotherContainer.count {
+        
+        return false
+    }
     
-    mutating func append(item: ItemType)
+    for i in 0..<someContainer.count {
+        
+        if someContainer[i] != anotherContainer[i] {
+            
+            return false
+        }
+    }
     
-    var count: Int { get }
-    
-    subscript(i: Int) -> ItemType { get }
+    return true
 }
 
+var stackOfStrings = Stack<String>()
+
+stackOfStrings.push("1")
+
+stackOfStrings.push("2")
+
+stackOfStrings.push("3")
+
+var arrayOfStrings = ["1", "2", "3"]
 
 
+if allItemsMatch(stackOfStrings, arrayOfStrings) {
+    
+    print("All items matched.")
 
-
+} else {
+    
+    print("Not all items matched.")
+}
 
 
 
